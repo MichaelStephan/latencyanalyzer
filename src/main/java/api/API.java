@@ -35,7 +35,7 @@ public class API implements ExceptionMapper<Exception> {
     @Produces(MediaType.APPLICATION_JSON)
     public void postStats(@Suspended final AsyncResponse asyncResponse, Ping ping) {
         checkNotNull(ping);
-        
+
         Pong pong = new Pong(ping);
         asyncResponse.resume(Response.ok().entity(pong).build());
     }
