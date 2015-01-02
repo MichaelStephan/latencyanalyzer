@@ -18,6 +18,7 @@ import service.StatsService;
 import java.net.URL;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Created by i303874 on 12/23/14.
@@ -28,9 +29,18 @@ public class Server {
 
     private int port;
 
-    public Server(int port) {
+    private URL url;
+
+    private int interval;
+
+    public Server(int port, URL url, int interval) {
         checkArgument(port > 0 && port <= 65535);
+        checkArgument(interval > 0);
+        checkNotNull(url);
+
         this.port = port;
+        this.url = url;
+        this.interval = interval;
     }
 
     public void run() throws ServerException {
@@ -67,7 +77,7 @@ public class Server {
             resourceConfig.register(provider);
 
             StatsService statsService = new StatsService();
-            PingService pingService = new PingService(statsService, 5, new URL("http://localhost:9999/latencyanalyzer/ping"));
+            PingService pingService = new PingService(statsService, interval, url);
             resourceConfig.register(new API(statsService));
 
             return resourceConfig;

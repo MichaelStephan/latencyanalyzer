@@ -6,7 +6,6 @@ import service.StatsService;
 import service.domain.Ping;
 import service.domain.Pong;
 
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -36,24 +35,17 @@ public class API implements ExceptionMapper<Exception> {
     @Produces(MediaType.APPLICATION_JSON)
     public void postStats(@Suspended final AsyncResponse asyncResponse, Ping ping) {
         checkNotNull(ping);
-
-        synchronized (this) {
-            try {
-                this.wait(5000);
-            } catch (Exception e) {
-            }
-        }
-
+        
         Pong pong = new Pong(ping);
         asyncResponse.resume(Response.ok().entity(pong).build());
     }
 
-    @GET
-    @Path("/stats")
-    @Produces(MediaType.APPLICATION_JSON)
-    public void getStats(@Suspended final AsyncResponse asyncResponse) {
-        asyncResponse.resume(Response.ok().entity(statsService.getStats()).build());
-    }
+//    @GET
+//    @Path("/stats")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public void getStats(@Suspended final AsyncResponse asyncResponse) {
+//        asyncResponse.resume(Response.ok().entity(statsService.getStats()).build());
+//    }
 
     @Override
     public Response toResponse(Exception e) {
