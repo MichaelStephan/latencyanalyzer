@@ -36,6 +36,6 @@ public class StatsService {
         Stat stat = new Stat(pong);
 //        stats.add(stat);
 
-        logger.info("CSV time from client to server," + stat.getTimeFromClientToServer() + ",time from server to client," + stat.getTimeFromServerToClient() + ",time on server," + stat.getTimeOnServer() + ",rountrip time," + stat.getTimeRoundtrip());
+        logger.info("CSV request sender," + stat.getRequestSender() + ",response sender," + stat.getResponseSender() + ",time from client to server," + stat.getTimeFromClientToServer() + ",time from server to client," + stat.getTimeFromServerToClient() + ",time on server," + stat.getTimeOnServer() + ",rountrip time," + stat.getTimeRoundtrip() + "," + stat.getRequestHeaders());
     }
 }

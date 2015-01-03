@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.ClientProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.domain.Ping;
@@ -35,12 +36,15 @@ public class PingService {
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-    public PingService(StatsService statsService, int interval, URL url) {
+    public PingService(String serverId, StatsService statsService, int interval, URL url) {
+        checkNotNull(serverId);
         checkNotNull(statsService);
         checkArgument(interval >= 5);
         checkNotNull(url);
 
         ClientConfig clientConfig = new ClientConfig();
+        clientConfig.property(ClientProperties.CONNECT_TIMEOUT, 60*1000*1);
+        clientConfig.property(ClientProperties.READ_TIMEOUT, 60*1000*1);
 
         ObjectMapper om = new ObjectMapper();
         om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
@@ -52,7 +56,7 @@ public class PingService {
         WebTarget target = ClientBuilder.newClient(clientConfig).target(url.getProtocol() + "://" + url.getHost() + ":" + url.getPort()).path(url.getPath());
 
         scheduler.scheduleAtFixedRate(() -> {
-            target.request(MediaType.APPLICATION_JSON).async().post(Entity.entity(new Ping(), MediaType.APPLICATION_JSON), new InvocationCallback<Response>() {
+            target.request(MediaType.APPLICATION_JSON).async().post(Entity.entity(new Ping(serverId), MediaType.APPLICATION_JSON), new InvocationCallback<Response>() {
                 @Override
                 public void completed(Response response) {
                     if (response.getStatus() == 200) {

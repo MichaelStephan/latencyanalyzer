@@ -1,5 +1,8 @@
 package service.domain;
 
+import java.util.List;
+import java.util.Map;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -8,21 +11,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class Stat {
     private long timestamp;
 
-    private long timeFromClientToServer;
-
-    private long timeFromServerToClient;
-
-    private long timeOnServer;
-
-    private long timeRoundtrip;
+    private Pong pong;
 
     public Stat(Pong pong) {
-        checkNotNull(pong);
-        this.timeFromClientToServer = System.currentTimeMillis();
-        this.timeFromClientToServer = pong.getRequest().getReceiveTime() - pong.getRequest().getSendTime();
-        this.timeFromServerToClient = pong.getResponse().getReceiveTime() - pong.getResponse().getSendTime();
-        this.timeOnServer = pong.getResponse().getSendTime() - pong.getRequest().getReceiveTime();
-        this.timeRoundtrip = pong.getResponse().getReceiveTime() - pong.getRequest().getSendTime();
+        this.pong = checkNotNull(pong);
+        this.timestamp = System.currentTimeMillis();
     }
 
     public long getTimestamp() {
@@ -30,18 +23,30 @@ public class Stat {
     }
 
     public long getTimeFromClientToServer() {
-        return timeFromClientToServer;
+        return pong.getRequest().getReceiveTime() - pong.getRequest().getSendTime();
+    }
+
+    public String getResponseSender() {
+        return pong.getResponseSender();
+    }
+
+    public String getRequestSender() {
+        return pong.getRequestSender();
     }
 
     public long getTimeFromServerToClient() {
-        return timeFromServerToClient;
+        return pong.getResponse().getReceiveTime() - pong.getResponse().getSendTime();
     }
 
     public long getTimeRoundtrip() {
-        return timeRoundtrip;
+        return pong.getResponse().getReceiveTime() - pong.getRequest().getSendTime();
     }
 
     public long getTimeOnServer() {
-        return timeOnServer;
+        return pong.getResponse().getSendTime() - pong.getRequest().getReceiveTime();
+    }
+
+    public Map<String, List<String>> getRequestHeaders() {
+        return pong.getRequestHeaders();
     }
 }

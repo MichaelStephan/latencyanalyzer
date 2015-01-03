@@ -11,6 +11,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
@@ -24,19 +26,22 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class API implements ExceptionMapper<Exception> {
     private final static Logger logger = LoggerFactory.getLogger(API.class);
 
+    private String serverId;
+
     private StatsService statsService;
 
-    public API(StatsService statsService) {
+    public API(String serverId, StatsService statsService) {
+        this.serverId = checkNotNull(serverId);
         this.statsService = checkNotNull(statsService);
     }
 
     @POST
     @Path("/ping")
     @Produces(MediaType.APPLICATION_JSON)
-    public void postStats(@Suspended final AsyncResponse asyncResponse, Ping ping) {
+    public void postStats(@Suspended final AsyncResponse asyncResponse, @Context HttpHeaders headers, Ping ping) {
         checkNotNull(ping);
 
-        Pong pong = new Pong(ping);
+        Pong pong = new Pong(serverId, headers.getRequestHeaders(), ping);
         asyncResponse.resume(Response.ok().entity(pong).build());
     }
 

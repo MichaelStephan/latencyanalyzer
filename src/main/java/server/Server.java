@@ -16,6 +16,7 @@ import service.PingService;
 import service.StatsService;
 
 import java.net.URL;
+import java.util.UUID;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -26,6 +27,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class Server {
 
     private final static Logger logger = LoggerFactory.getLogger(Server.class);
+
+    private String serverId = UUID.randomUUID().toString();
 
     private int port;
 
@@ -49,11 +52,6 @@ public class Server {
         context.setContextPath("/");
 
         server.setHandler(context);
-
-//        NCSARequestLog requestLog = new AsyncNCSARequestLog();
-//        requestLog.setFilename(jetty_home + "/logs/jetty-yyyy_mm_dd.log");
-//        requestLog.setExtended(false);
-//        requestLogHandler.setRequestLog(requestLog);
 
         context.addServlet(new ServletHolder(new ServletContainer(resourceConfig())), "/*");
 
@@ -83,8 +81,8 @@ public class Server {
             resourceConfig.register(provider);
 
             StatsService statsService = new StatsService();
-            new PingService(statsService, interval, url);
-            resourceConfig.register(new API(statsService));
+            new PingService(serverId, statsService, interval, url);
+            resourceConfig.register(new API(serverId, statsService));
 
             return resourceConfig;
         } catch (Exception e) {

@@ -7,7 +7,7 @@ mkdir build
 mkdir build/bin
 mkdir build/lib
 cp ../deploy/run.sh build/bin/
-cp ../src/main/resources/logback.xml build/lib/
+#cp ../src/main/resources/logback.xml build/lib/
 chmod u+x build/bin/run.sh
 cp *.jar build/lib/
 cd build
