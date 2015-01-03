@@ -45,8 +45,8 @@ public class PingService {
         checkNotNull(url);
 
         ClientConfig clientConfig = new ClientConfig();
-        clientConfig.property(ClientProperties.CONNECT_TIMEOUT, 60 * 1000 * 5);
-        clientConfig.property(ClientProperties.READ_TIMEOUT, 60 * 1000 * 5);
+        clientConfig.property(ClientProperties.CONNECT_TIMEOUT, 60 * 1000 * 10);
+        clientConfig.property(ClientProperties.READ_TIMEOUT, 60 * 1000 * 10);
 
         ObjectMapper om = new ObjectMapper();
         om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
@@ -63,6 +63,7 @@ public class PingService {
                 senderProperties.put(entry.getKey(), entry.getValue());
             });
 
+            final long start = System.currentTimeMillis();
             target.request(MediaType.APPLICATION_JSON).async().post(Entity.entity(new Ping(senderProperties), MediaType.APPLICATION_JSON), new InvocationCallback<Response>() {
                 @Override
                 public void completed(Response response) {
@@ -80,7 +81,7 @@ public class PingService {
                 @Override
                 public void failed(Throwable throwable) {
                     logger.warn("ping failed", throwable);
-                    statsService.updateStats(throwable);
+                    statsService.updateStats(throwable, System.currentTimeMillis() - start);
                 }
             });
         }, INITIAL_DELAY, interval, TimeUnit.SECONDS);

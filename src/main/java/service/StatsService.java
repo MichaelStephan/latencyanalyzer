@@ -22,12 +22,12 @@ public class StatsService {
 //        return stats;
 //    }
 
-    public void updateStats(Throwable e) {
+    public void updateStats(Throwable e, long timeUntilError) {
         if (e instanceof TimeoutException) {
-            logger.info("CSV error,timeout");
+            logger.info("CSV error|timeout");
 
         } else {
-            logger.info("CSV error," + e.getClass().getName() + "," + e.getMessage());
+            logger.info("CSV error|time until error|" + timeUntilError + "|" + e.getClass().getName() + "|" + e.getMessage());
         }
     }
 
@@ -40,6 +40,6 @@ public class StatsService {
         Map<String, Object> requestSenderProperties = stat.getRequestSenderProperties();
         Map<String, Object> responseSenderProperties = stat.getResponseSenderProperties();
 
-        logger.info("CSV request sender," + requestSenderProperties.get("sender") + ",response sender," + responseSenderProperties.get("sender") + ",time from client to server," + stat.getTimeFromClientToServer() + ",time from server to client," + stat.getTimeFromServerToClient() + ",time on server," + stat.getTimeOnServer() + ",rountrip time," + stat.getTimeRoundtrip() + ",request sender properties," + requestSenderProperties + ", response sender properties," + responseSenderProperties);
+        logger.info("CSV request sender|" + requestSenderProperties.get("sender") + "|response sender|" + responseSenderProperties.get("sender") + "|time from client to server|" + stat.getTimeFromClientToServer() + "|time from server to client|" + stat.getTimeFromServerToClient() + "|time on server|" + stat.getTimeOnServer() + "|rountrip time|" + stat.getTimeRoundtrip() + "|request sender properties|" + requestSenderProperties + "|response sender properties|" + responseSenderProperties);
     }
 }

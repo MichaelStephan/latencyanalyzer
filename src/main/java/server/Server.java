@@ -15,7 +15,10 @@ import org.slf4j.LoggerFactory;
 import service.PingService;
 import service.StatsService;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.Map;
 import java.util.UUID;
 
@@ -48,7 +51,24 @@ public class Server {
         this.url = url;
         this.interval = interval;
         this.properties = checkNotNull(properties);
+
         properties.put("sender", serverId);
+        properties.put("senderIps", "unknown");
+
+        try {
+            Enumeration e = NetworkInterface.getNetworkInterfaces();
+            String senderIps = "";
+            while (e.hasMoreElements()) {
+                NetworkInterface n = (NetworkInterface) e.nextElement();
+                Enumeration ee = n.getInetAddresses();
+                while (ee.hasMoreElements()) {
+                    InetAddress i = (InetAddress) ee.nextElement();
+                    senderIps += i.getHostAddress() + " ";
+                }
+            }
+            properties.put("senderIps", senderIps);
+        } catch (Exception e) {
+        }
     }
 
     public void run() throws ServerException {
