@@ -19,6 +19,8 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -36,15 +38,15 @@ public class PingService {
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-    public PingService(String serverId, StatsService statsService, int interval, URL url) {
-        checkNotNull(serverId);
+    public PingService(Map<String, Object> properties, StatsService statsService, int interval, URL url) {
+        checkNotNull(properties);
         checkNotNull(statsService);
         checkArgument(interval >= 5);
         checkNotNull(url);
 
         ClientConfig clientConfig = new ClientConfig();
-        clientConfig.property(ClientProperties.CONNECT_TIMEOUT, 60*1000*1);
-        clientConfig.property(ClientProperties.READ_TIMEOUT, 60*1000*1);
+        clientConfig.property(ClientProperties.CONNECT_TIMEOUT, 60 * 1000 * 5);
+        clientConfig.property(ClientProperties.READ_TIMEOUT, 60 * 1000 * 5);
 
         ObjectMapper om = new ObjectMapper();
         om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
@@ -56,7 +58,12 @@ public class PingService {
         WebTarget target = ClientBuilder.newClient(clientConfig).target(url.getProtocol() + "://" + url.getHost() + ":" + url.getPort()).path(url.getPath());
 
         scheduler.scheduleAtFixedRate(() -> {
-            target.request(MediaType.APPLICATION_JSON).async().post(Entity.entity(new Ping(serverId), MediaType.APPLICATION_JSON), new InvocationCallback<Response>() {
+            Map<String, Object> senderProperties = new HashMap<String, Object>();
+            properties.entrySet().forEach((entry) -> {
+                senderProperties.put(entry.getKey(), entry.getValue());
+            });
+
+            target.request(MediaType.APPLICATION_JSON).async().post(Entity.entity(new Ping(senderProperties), MediaType.APPLICATION_JSON), new InvocationCallback<Response>() {
                 @Override
                 public void completed(Response response) {
                     if (response.getStatus() == 200) {

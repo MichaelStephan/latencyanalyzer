@@ -1,6 +1,5 @@
 package service.domain;
 
-import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -26,12 +25,12 @@ public class Stat {
         return pong.getRequest().getReceiveTime() - pong.getRequest().getSendTime();
     }
 
-    public String getResponseSender() {
-        return pong.getResponseSender();
+    public Map<String, Object> getResponseSenderProperties() {
+        return pong.getResponseSenderProperties();
     }
 
-    public String getRequestSender() {
-        return pong.getRequestSender();
+    public Map<String, Object> getRequestSenderProperties() {
+        return pong.getRequestSenderProperties();
     }
 
     public long getTimeFromServerToClient() {
@@ -44,9 +43,5 @@ public class Stat {
 
     public long getTimeOnServer() {
         return pong.getResponse().getSendTime() - pong.getRequest().getReceiveTime();
-    }
-
-    public Map<String, List<String>> getRequestHeaders() {
-        return pong.getRequestHeaders();
     }
 }

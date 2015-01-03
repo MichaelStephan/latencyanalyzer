@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import service.domain.Pong;
 import service.domain.Stat;
 
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -36,6 +37,9 @@ public class StatsService {
         Stat stat = new Stat(pong);
 //        stats.add(stat);
 
-        logger.info("CSV request sender," + stat.getRequestSender() + ",response sender," + stat.getResponseSender() + ",time from client to server," + stat.getTimeFromClientToServer() + ",time from server to client," + stat.getTimeFromServerToClient() + ",time on server," + stat.getTimeOnServer() + ",rountrip time," + stat.getTimeRoundtrip() + "," + stat.getRequestHeaders());
+        Map<String, Object> requestSenderProperties = stat.getRequestSenderProperties();
+        Map<String, Object> responseSenderProperties = stat.getResponseSenderProperties();
+
+        logger.info("CSV request sender," + requestSenderProperties.get("sender") + ",response sender," + responseSenderProperties.get("sender") + ",time from client to server," + stat.getTimeFromClientToServer() + ",time from server to client," + stat.getTimeFromServerToClient() + ",time on server," + stat.getTimeOnServer() + ",rountrip time," + stat.getTimeRoundtrip() + ",request sender properties," + requestSenderProperties + ", response sender properties," + responseSenderProperties);
     }
 }

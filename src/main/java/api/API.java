@@ -17,6 +17,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -26,12 +29,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class API implements ExceptionMapper<Exception> {
     private final static Logger logger = LoggerFactory.getLogger(API.class);
 
-    private String serverId;
+    private Map<String, Object> properties;
 
     private StatsService statsService;
 
-    public API(String serverId, StatsService statsService) {
-        this.serverId = checkNotNull(serverId);
+    public API(Map<String, Object> properties, StatsService statsService) {
+        this.properties = checkNotNull(properties);
         this.statsService = checkNotNull(statsService);
     }
 
@@ -41,7 +44,13 @@ public class API implements ExceptionMapper<Exception> {
     public void postStats(@Suspended final AsyncResponse asyncResponse, @Context HttpHeaders headers, Ping ping) {
         checkNotNull(ping);
 
-        Pong pong = new Pong(serverId, headers.getRequestHeaders(), ping);
+        Map<String, Object> receiverProperties = new HashMap<String, Object>();
+        properties.entrySet().forEach((entry) -> {
+            receiverProperties.put(entry.getKey(), entry.getValue());
+        });
+        receiverProperties.put("headers", headers.getRequestHeaders());
+
+        Pong pong = new Pong(receiverProperties, ping);
         asyncResponse.resume(Response.ok().entity(pong).build());
     }
 

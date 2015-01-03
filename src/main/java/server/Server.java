@@ -16,6 +16,7 @@ import service.PingService;
 import service.StatsService;
 
 import java.net.URL;
+import java.util.Map;
 import java.util.UUID;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -28,6 +29,8 @@ public class Server {
 
     private final static Logger logger = LoggerFactory.getLogger(Server.class);
 
+    private Map<String, Object> properties;
+
     private String serverId = UUID.randomUUID().toString();
 
     private int port;
@@ -36,7 +39,7 @@ public class Server {
 
     private int interval;
 
-    public Server(int port, URL url, int interval) {
+    public Server(int port, URL url, int interval, Map<String, Object> properties) {
         checkArgument(port > 0 && port <= 65535);
         checkArgument(interval > 0);
         checkNotNull(url);
@@ -44,6 +47,8 @@ public class Server {
         this.port = port;
         this.url = url;
         this.interval = interval;
+        this.properties = checkNotNull(properties);
+        properties.put("sender", serverId);
     }
 
     public void run() throws ServerException {
@@ -81,8 +86,8 @@ public class Server {
             resourceConfig.register(provider);
 
             StatsService statsService = new StatsService();
-            new PingService(serverId, statsService, interval, url);
-            resourceConfig.register(new API(serverId, statsService));
+            new PingService(properties, statsService, interval, url);
+            resourceConfig.register(new API(properties, statsService));
 
             return resourceConfig;
         } catch (Exception e) {

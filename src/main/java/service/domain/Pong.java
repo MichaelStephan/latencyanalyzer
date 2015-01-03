@@ -3,7 +3,6 @@ package service.domain;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -12,31 +11,27 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Created by i303874 on 1/2/15.
  */
 public class Pong {
-    private String requestSender;
+    private Map<String, Object> requestSenderProperties;
 
-    private Map<String, List<String>> requestHeaders;
-
-    private String responseSender;
+    private Map<String, Object> responseSenderProperties;
 
     private Measurable request;
 
     private Measurable response;
 
-    public Pong(String serverId, Map<String, List<String>> requestHeaders, Ping ping) {
+    public Pong(Map<String, Object> responseSenderProperties, Ping ping) {
         checkNotNull(ping);
-        this.requestHeaders = checkNotNull(requestHeaders);
-        this.requestSender = checkNotNull(ping.getSender());
-        this.responseSender = checkNotNull(serverId);
+        this.requestSenderProperties = checkNotNull(ping.getSenderProperties());
+        this.responseSenderProperties = checkNotNull(responseSenderProperties);
         this.request = checkNotNull(ping.getRequest());
         this.response = new Measurable();
     }
 
     @JsonCreator
-    public Pong(@JsonProperty("requestSender") String requestSender, @JsonProperty("requestHeaders") Map<String, List<String>> requestHeaders, @JsonProperty("responseSender") String responseSender, @JsonProperty("request") Measurable request, @JsonProperty("response") Measurable response) {
-        this.requestSender = checkNotNull(requestSender);
-        this.responseSender = checkNotNull(responseSender);
+    public Pong(@JsonProperty("requestSenderProperties") Map<String, Object> requestSenderProperties, @JsonProperty("responseSenderProperties") Map<String, Object> responseSenderProperties, @JsonProperty("request") Measurable request, @JsonProperty("response") Measurable response) {
+        this.requestSenderProperties = checkNotNull(requestSenderProperties);
+        this.responseSenderProperties = checkNotNull(responseSenderProperties);
         this.request = checkNotNull(request);
-        this.requestHeaders = checkNotNull(requestHeaders);
         this.response = new Measurable(checkNotNull(response));
     }
 
@@ -45,16 +40,12 @@ public class Pong {
                 "response: " + response;
     }
 
-    public String getRequestSender() {
-        return requestSender;
+    public Map<String, Object> getResponseSenderProperties() {
+        return responseSenderProperties;
     }
 
-    public String getResponseSender() {
-        return responseSender;
-    }
-
-    public Map<String, List<String>> getRequestHeaders() {
-        return requestHeaders;
+    public Map<String, Object> getRequestSenderProperties() {
+        return requestSenderProperties;
     }
 
     public Measurable getRequest() {

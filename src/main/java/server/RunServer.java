@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by i303874 on 12/31/14.
@@ -90,7 +92,15 @@ public class RunServer {
             bye(e);
         }
 
-        Server server = new Server(webServerPort, url, interval);
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put("VCAP_APP_HOST", System.getenv("VCAP_APP_HOST"));
+        properties.put("VCAP_APPLICATION", System.getenv("VCAP_APPLICATION"));
+        
+//        System.getenv().entrySet().forEach((entry) -> {
+//            properties.put(entry.getKey(), entry.getValue());
+//        });
+
+        Server server = new Server(webServerPort, url, interval, properties);
         try {
             server.run();
         } catch (ServerException e) {
