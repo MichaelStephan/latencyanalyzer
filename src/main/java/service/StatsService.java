@@ -24,7 +24,7 @@ public class StatsService {
         checkNotNull(timeUntilError);
 
         try {
-            logger.info("ERROR " + objectMapper.writeValueAsString(new ErrorStat(ping, e, timeUntilError)));
+            logger.info("STAT ERROR " + objectMapper.writeValueAsString(new ErrorStat(ping, e, timeUntilError)));
         } catch (Exception e1) {
             logger.warn("unable to convert status to json", e1);
         }
@@ -34,7 +34,7 @@ public class StatsService {
         checkNotNull(pong);
 
         try {
-            logger.info("SUCCESS " + objectMapper.writeValueAsString(new Stat(pong)));
+            logger.info("STAT SUCCESS " + objectMapper.writeValueAsString(new Stat(pong)));
         } catch (Exception e1) {
             logger.warn("unable to convert status to json", e1);
         }
