@@ -23,7 +23,7 @@ public class StatsService {
 //    }
 
     public void updateStats(Ping ping, Throwable e, long timeUntilError) {
-        logger.info("CSV2 error|time until error|" + timeUntilError + "|" + e.getClass().getName() + "|" + e.getMessage()+"|"+ping.getSenderProperties());
+        logger.info("CSV2 error|time until error|" + timeUntilError + "|" + e.getClass().getName() + "|" + e.getMessage()+"|request sender properties|"+ping.getSenderProperties());
     }
 
     public void updateStats(Pong pong) {
