@@ -61,7 +61,7 @@ public class Server {
                 Enumeration ee = n.getInetAddresses();
                 while (ee.hasMoreElements()) {
                     InetAddress i = (InetAddress) ee.nextElement();
-                    senderIps.add(i.getHostName());
+                    senderIps.add(i.getHostAddress());
                 }
             }
         } catch (Exception e) {
