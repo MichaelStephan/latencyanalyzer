@@ -3,7 +3,7 @@ applications:
 - name: latencyanalyzer
   memory: 512M
   instances: 1
-  path: target/build/app.zip
+  path: ../target/build/app.zip
   buildpack: java_buildpack
   env:
     INTERVAL: 10

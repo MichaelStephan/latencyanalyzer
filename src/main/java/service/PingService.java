@@ -1,5 +1,11 @@
 package service;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
+import org.glassfish.jersey.client.ClientConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.domain.Ping;
@@ -34,9 +40,18 @@ public class PingService {
         checkArgument(interval >= 5);
         checkNotNull(url);
 
-        scheduler.scheduleAtFixedRate(() -> {
-            WebTarget target = ClientBuilder.newClient().target(url.getProtocol() + "://" + url.getHost() + ":" + url.getPort()).path(url.getPath());
+        ClientConfig clientConfig = new ClientConfig();
 
+        ObjectMapper om = new ObjectMapper();
+        om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        om.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+        JacksonJaxbJsonProvider provider = new JacksonJaxbJsonProvider();
+        provider.setMapper(om);
+        clientConfig.register(provider);
+
+        WebTarget target = ClientBuilder.newClient(clientConfig).target(url.getProtocol() + "://" + url.getHost() + ":" + url.getPort()).path(url.getPath());
+
+        scheduler.scheduleAtFixedRate(() -> {
             target.request(MediaType.APPLICATION_JSON).async().post(Entity.entity(new Ping(), MediaType.APPLICATION_JSON), new InvocationCallback<Response>() {
                 @Override
                 public void completed(Response response) {

@@ -47,7 +47,13 @@ public class Server {
         org.eclipse.jetty.server.Server server = new org.eclipse.jetty.server.Server(port);
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.NO_SESSIONS | ServletContextHandler.NO_SECURITY);
         context.setContextPath("/");
+
         server.setHandler(context);
+
+//        NCSARequestLog requestLog = new AsyncNCSARequestLog();
+//        requestLog.setFilename(jetty_home + "/logs/jetty-yyyy_mm_dd.log");
+//        requestLog.setExtended(false);
+//        requestLogHandler.setRequestLog(requestLog);
 
         context.addServlet(new ServletHolder(new ServletContainer(resourceConfig())), "/*");
 
@@ -77,7 +83,7 @@ public class Server {
             resourceConfig.register(provider);
 
             StatsService statsService = new StatsService();
-            PingService pingService = new PingService(statsService, interval, url);
+            new PingService(statsService, interval, url);
             resourceConfig.register(new API(statsService));
 
             return resourceConfig;
