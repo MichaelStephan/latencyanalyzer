@@ -64,7 +64,8 @@ public class PingService {
             });
 
             final long start = System.currentTimeMillis();
-            target.request(MediaType.APPLICATION_JSON).async().post(Entity.entity(new Ping(senderProperties), MediaType.APPLICATION_JSON), new InvocationCallback<Response>() {
+            final Ping ping = new Ping(senderProperties);
+            target.request(MediaType.APPLICATION_JSON).async().post(Entity.entity(ping, MediaType.APPLICATION_JSON), new InvocationCallback<Response>() {
                 @Override
                 public void completed(Response response) {
                     if (response.getStatus() == 200) {
@@ -81,7 +82,7 @@ public class PingService {
                 @Override
                 public void failed(Throwable throwable) {
                     logger.warn("ping failed", throwable);
-                    statsService.updateStats(throwable, System.currentTimeMillis() - start);
+                    statsService.updateStats(ping, throwable, System.currentTimeMillis() - start);
                 }
             });
         }, INITIAL_DELAY, interval, TimeUnit.SECONDS);
