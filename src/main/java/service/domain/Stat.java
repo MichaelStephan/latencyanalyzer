@@ -1,5 +1,7 @@
 package service.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -8,8 +10,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Created by i303874 on 1/2/15.
  */
 public class Stat {
+    @JsonIgnore
     private long timestamp;
 
+    @JsonIgnore
     private Pong pong;
 
     public Stat(Pong pong) {

@@ -18,9 +18,7 @@ import service.StatsService;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.URL;
-import java.util.Enumeration;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -53,20 +51,19 @@ public class Server {
         this.properties = checkNotNull(properties);
 
         properties.put("sender", serverId);
-        properties.put("senderIps", "unknown");
+        List<String> senderIps = new LinkedList<>();
+        properties.put("senderIps", senderIps);
 
         try {
             Enumeration e = NetworkInterface.getNetworkInterfaces();
-            String senderIps = "";
             while (e.hasMoreElements()) {
                 NetworkInterface n = (NetworkInterface) e.nextElement();
                 Enumeration ee = n.getInetAddresses();
                 while (ee.hasMoreElements()) {
                     InetAddress i = (InetAddress) ee.nextElement();
-                    senderIps += i.getHostAddress() + " ";
+                    senderIps.add(i.getHostName());
                 }
             }
-            properties.put("senderIps", senderIps);
         } catch (Exception e) {
         }
     }
