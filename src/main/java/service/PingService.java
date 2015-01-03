@@ -69,6 +69,7 @@ public class PingService {
                 @Override
                 public void failed(Throwable throwable) {
                     logger.warn("ping failed", throwable);
+                    statsService.updateStats(throwable);
                 }
             });
         }, INITIAL_DELAY, interval, TimeUnit.SECONDS);

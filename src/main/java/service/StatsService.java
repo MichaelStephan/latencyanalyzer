@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import service.domain.Pong;
 import service.domain.Stat;
 
+import java.util.concurrent.TimeoutException;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -18,6 +20,15 @@ public class StatsService {
 //    public Stats getStats() {
 //        return stats;
 //    }
+
+    public void updateStats(Throwable e) {
+        if (e instanceof TimeoutException) {
+            logger.info("CSV error,timeout");
+
+        } else {
+            logger.info("CSV error," + e.getClass().getName() + "," + e.getMessage());
+        }
+    }
 
     public void updateStats(Pong pong) {
         checkNotNull(pong);
