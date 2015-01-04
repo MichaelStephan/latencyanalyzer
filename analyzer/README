@@ -1,0 +1,5 @@
+* collect metrics
+cf logs latencyanalyzer > test.txt
+
+* analyze metrics
+cat test.txt | node analyze.js | tail -n 100
