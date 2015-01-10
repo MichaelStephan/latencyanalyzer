@@ -9,14 +9,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Created by i303874 on 1/2/15.
  */
-public class Stat {
+public class SuccessStat {
     @JsonIgnore
     private long timestamp;
 
     @JsonIgnore
     private Pong pong;
 
-    public Stat(Pong pong) {
+    public SuccessStat(Pong pong) {
         this.pong = checkNotNull(pong);
         this.timestamp = System.currentTimeMillis();
     }

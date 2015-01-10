@@ -14,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.PingService;
 import service.StatsService;
+import service.stat.StatProvider;
+import service.stat.SuccessErrorCountStatProvider;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -31,6 +33,10 @@ public class Server {
     private final static Logger logger = LoggerFactory.getLogger(Server.class);
 
     private Map<String, Object> properties;
+
+    private final static String SENDERID_PROPERTY = "la_senderId";
+
+    private final static String SENDERIPS_PROPERTY = "la_senderIps";
 
     private String serverId = UUID.randomUUID().toString();
 
@@ -50,9 +56,9 @@ public class Server {
         this.interval = interval;
         this.properties = checkNotNull(properties);
 
-        properties.put("sender", serverId);
+        properties.put("la_senderId", serverId);
         List<String> senderIps = new LinkedList<>();
-        properties.put("senderIps", senderIps);
+        properties.put("la_senderIps", senderIps);
 
         try {
             Enumeration e = NetworkInterface.getNetworkInterfaces();
@@ -102,7 +108,7 @@ public class Server {
             provider.setMapper(om);
             resourceConfig.register(provider);
 
-            StatsService statsService = new StatsService();
+            StatsService statsService = new StatsService(1000, Arrays.asList(new StatProvider[]{new SuccessErrorCountStatProvider()}));
             new PingService(properties, statsService, interval, url);
             resourceConfig.register(new API(properties, statsService));
 

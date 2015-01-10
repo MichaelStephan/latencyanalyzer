@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import service.domain.ErrorStat;
 import service.domain.Ping;
 import service.domain.Pong;
-import service.domain.Stat;
+import service.domain.SuccessStat;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -23,8 +23,10 @@ public class StatsService {
         checkNotNull(e);
         checkNotNull(timeUntilError);
 
+        ErrorStat errorStat = new ErrorStat(ping, e, timeUntilError);
+
         try {
-            logger.info("STAT ERROR " + objectMapper.writeValueAsString(new ErrorStat(ping, e, timeUntilError)));
+            logger.info("STAT ERROR " + objectMapper.writeValueAsString(errorStat));
         } catch (Exception e1) {
             logger.warn("unable to convert status to json", e1);
         }
@@ -33,8 +35,10 @@ public class StatsService {
     public void updateStats(Pong pong) {
         checkNotNull(pong);
 
+        SuccessStat successStat = new SuccessStat(pong);
+
         try {
-            logger.info("STAT SUCCESS " + objectMapper.writeValueAsString(new Stat(pong)));
+            logger.info("STAT SUCCESS " + objectMapper.writeValueAsString(successStat));
         } catch (Exception e1) {
             logger.warn("unable to convert status to json", e1);
         }

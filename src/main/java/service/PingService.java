@@ -12,15 +12,13 @@ import org.slf4j.LoggerFactory;
 import service.domain.Ping;
 import service.domain.Pong;
 
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.InvocationCallback;
-import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.client.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -33,6 +31,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class PingService {
     private final static int INITIAL_DELAY = 5;
+
+    private final static String ID_PROPERTY = "la_id";
 
     private final static Logger logger = LoggerFactory.getLogger(PingService.class);
 
@@ -55,17 +55,19 @@ public class PingService {
         provider.setMapper(om);
         clientConfig.register(provider);
 
-        WebTarget target = ClientBuilder.newClient(clientConfig).target(url.getProtocol() + "://" + url.getHost() + ":" + url.getPort()).path(url.getPath());
+        Client client = ClientBuilder.newClient(clientConfig);
 
         scheduler.scheduleAtFixedRate(() -> {
             Map<String, Object> senderProperties = new HashMap<String, Object>();
             properties.entrySet().forEach((entry) -> {
                 senderProperties.put(entry.getKey(), entry.getValue());
             });
+            senderProperties.put(ID_PROPERTY, UUID.randomUUID());
 
             final long start = System.currentTimeMillis();
             final Ping ping = new Ping(senderProperties);
-            target.request(MediaType.APPLICATION_JSON).async().post(Entity.entity(ping, MediaType.APPLICATION_JSON), new InvocationCallback<Response>() {
+
+            client.target(url.getProtocol() + "://" + url.getHost() + ":" + url.getPort()).path(url.getPath()).queryParam(ID_PROPERTY, senderProperties.get(ID_PROPERTY)).request(MediaType.APPLICATION_JSON).async().post(Entity.entity(ping, MediaType.APPLICATION_JSON), new InvocationCallback<Response>() {
                 @Override
                 public void completed(Response response) {
                     if (response.getStatus() == 200) {

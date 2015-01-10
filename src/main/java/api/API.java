@@ -6,9 +6,7 @@ import service.StatsService;
 import service.domain.Ping;
 import service.domain.Pong;
 
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.Context;
@@ -16,9 +14,9 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
-
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -55,16 +53,19 @@ public class API implements ExceptionMapper<Exception> {
     }
 
 //    @GET
-//    @Path("/stats")
+//    @Path("/stat/{type}")
 //    @Produces(MediaType.APPLICATION_JSON)
-//    public void getStats(@Suspended final AsyncResponse asyncResponse) {
-//        asyncResponse.resume(Response.ok().entity(statsService.getStats()).build());
+//    public void getStats(@Suspended final AsyncResponse asyncResponse, @PathParam("type") String statType) {
+//        asyncResponse.resume(Response.ok().entity(statsService.getStats(statType)).build());
 //    }
 
     @Override
     public Response toResponse(Exception e) {
-        logger.error("an API call caused an exception", e);
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-
+        if (e instanceof NoSuchElementException) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        } else {
+            logger.error("an API call caused an exception", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
     }
 }

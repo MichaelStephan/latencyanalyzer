@@ -17,12 +17,12 @@ var updateStats = function(data) {
     stats[app][type].count++;
 
     if(type == "success") {
-      ipToApp[app] = data.requestSenderProperties.senderIps[0];
+      ipToApp[app] = data.requestSenderProperties.la_senderIps[0];
 
-      if(isNullOrUndefined(stats[app].receivers[data.responseSenderProperties.senderIps[0]])) {
-        stats[app].receivers[data.responseSenderProperties.senderIps[0]] = 1;
+      if(isNullOrUndefined(stats[app].receivers[data.responseSenderProperties.la_senderIps[0]])) {
+        stats[app].receivers[data.responseSenderProperties.la_senderIps[0]] = 1;
       } else {
-        stats[app].receivers[data.responseSenderProperties.senderIps[0]]++;
+        stats[app].receivers[data.responseSenderProperties.la_senderIps[0]]++;
       }
     }
   }
@@ -81,16 +81,16 @@ var stripUnnecessarySenderIps = function(data) {
   };
 
   if(!isNullOrUndefined(data)) {
-    if(!isNullOrUndefined(data.requestSenderProperties) && !isNullOrUndefined(data.requestSenderProperties.senderIps)) {
-      data.requestSenderProperties.senderIps = strip(data.requestSenderProperties.senderIps);
+    if(!isNullOrUndefined(data.requestSenderProperties) && !isNullOrUndefined(data.requestSenderProperties.la_senderIps)) {
+      data.requestSenderProperties.la_senderIps = strip(data.requestSenderProperties.la_senderIps);
     }
 
-    if(!isNullOrUndefined(data.responseSenderProperties) && !isNullOrUndefined(data.responseSenderProperties.senderIps)) {
-      data.responseSenderProperties.senderIps = strip(data.responseSenderProperties.senderIps);
+    if(!isNullOrUndefined(data.responseSenderProperties) && !isNullOrUndefined(data.responseSenderProperties.la_senderIps)) {
+      data.responseSenderProperties.la_senderIps = strip(data.responseSenderProperties.la_senderIps);
     }
 
-    if(!isNullOrUndefined(data.senderProperties) && !isNullOrUndefined(data.senderProperties.senderIps)) {
-      data.senderProperties.senderIps = strip(data.senderProperties.senderIps);
+    if(!isNullOrUndefined(data.senderProperties) && !isNullOrUndefined(data.senderProperties.la_senderIps)) {
+      data.senderProperties.la_senderIps = strip(data.senderProperties.la_senderIps);
     }
   }
   return data;
