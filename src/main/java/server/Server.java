@@ -14,8 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.PingService;
 import service.StatsService;
-import service.stat.StatProvider;
-import service.stat.SuccessErrorCountStatProvider;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -108,7 +106,7 @@ public class Server {
             provider.setMapper(om);
             resourceConfig.register(provider);
 
-            StatsService statsService = new StatsService(1000, Arrays.asList(new StatProvider[]{new SuccessErrorCountStatProvider()}));
+            StatsService statsService = new StatsService();
             new PingService(properties, statsService, interval, url);
             resourceConfig.register(new API(properties, statsService));
 
