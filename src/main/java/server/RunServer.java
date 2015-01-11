@@ -94,8 +94,9 @@ public class RunServer {
 
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.put("VCAP_APP_HOST", System.getenv("VCAP_APP_HOST"));
+        properties.put("VCAP_SERVICES", System.getenv("VCAP_SERVICES"));
         properties.put("VCAP_APPLICATION", System.getenv("VCAP_APPLICATION"));
-        
+
 //        System.getenv().entrySet().forEach((entry) -> {
 //            properties.put(entry.getKey(), entry.getValue());
 //        });
